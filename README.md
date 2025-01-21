@@ -29,6 +29,7 @@ NotesAPI/
 ├── static/
 ├── migrations/
 ├── tests/
+├──.gitignore
 ├── requirements.txt
 └── README.md
 ```
