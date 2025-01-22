@@ -1,5 +1,6 @@
 from flask import Flask
 from extensions import db
+from routes.notes import notes_bp
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +12,9 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)
+    
+    # Registration of blueprints
+    app.register_blueprint(notes_bp, url_prefix='/notes')
     
     @app.route('/')
     def index():
