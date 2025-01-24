@@ -33,3 +33,17 @@ def create():
             'content': new_note.content
         }
     }), 201
+    
+@notes_bp.route('/', methods=['POST'])
+def get_notes():
+    notes = Note.query.all()
+    notes_list = []
+    
+    for note in notes:
+        notes_list.append(
+            {'id': note.id,
+            'title': note.title,
+            'content': note.content,
+            'created_at': note.created_at})
+        
+    return jsonify(notes_list)
