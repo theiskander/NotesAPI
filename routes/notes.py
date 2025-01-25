@@ -17,10 +17,13 @@ def create():
     if not title:
         return jsonify({'error': 'Title is required'}), 400
 
+    time = datetime.now(timezone.utc)
+    
     new_note = Note(
         title=title,
         content=content,
-        created_at=datetime.now(timezone.utc)
+        created_at=time,
+        updated_at=time
     )
     db.session.add(new_note)
     db.session.commit()
@@ -30,7 +33,7 @@ def create():
         'note': {
             'id': new_note.id,
             'title': new_note.title,
-            'content': new_note.content
+            'content': new_note.content,
         }
     }), 201
     
@@ -44,7 +47,9 @@ def get_notes():
             {'id': note.id,
             'title': note.title,
             'content': note.content,
-            'created_at': note.created_at})
+            'created_at': note.created_at,
+            'updated_at': note.updated_at
+            })
         
     return jsonify(notes_list)
 
@@ -60,7 +65,8 @@ def get_note(note_id):
             'id': note.id,
             'title': note.title,
             'content': note.content,
-            'created_at': note.created_at
+            'created_at': note.created_at,
+            'updated_at': note.updated_at
         }
     })
     
@@ -75,6 +81,9 @@ def update_note(note_id):
     note.content = data.get('content', note.content)
     note.updated_at = datetime.now(timezone.utc)
     
+    if not data.get('title') and not data.get('content'):
+        return jsonify({'error': 'No data provided for update'}), 400
+
     db.session.commit()
     return jsonify({'message': 'Note updated successfully',
                     'note': {
