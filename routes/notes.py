@@ -63,3 +63,24 @@ def get_note(note_id):
             'created_at': note.created_at
         }
     })
+    
+@notes_bp.route('/<int:note_id>', methods=['PUT'])
+def update_note(note_id):
+    data = request.get_json()
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({'error': 'Note not found'}), 404
+    
+    note.title = data.get('title', note.title)
+    note.content = data.get('content', note.content)
+    note.updated_at = datetime.now(timezone.utc)
+    
+    db.session.commit()
+    return jsonify({'message': 'Note updated successfully',
+                    'note': {
+                        'id': note.id,
+                        'title': note.title,
+                        'content': note.content,
+                        'updated_at': note.updated_at
+        }
+    })
