@@ -5,6 +5,7 @@ from extensions import db
 
 notes_bp = Blueprint('notes', __name__)
 
+# Create a note
 @notes_bp.route('/create', methods=['POST'])
 def create():
     data = request.get_json()
@@ -37,7 +38,8 @@ def create():
         }
     }), 201
     
-@notes_bp.route('/', methods=['POST'])
+# Get all notes
+@notes_bp.route('/', methods=['GET'])
 def get_notes():
     notes = Note.query.all()
     notes_list = []
@@ -53,6 +55,7 @@ def get_notes():
         
     return jsonify(notes_list)
 
+# Get a note
 @notes_bp.route('/<int:note_id>', methods=['GET'])
 def get_note(note_id):
     note = Note.query.get(note_id)
@@ -69,7 +72,8 @@ def get_note(note_id):
             'updated_at': note.updated_at
         }
     })
-    
+
+# Update a not
 @notes_bp.route('/<int:note_id>', methods=['PUT'])
 def update_note(note_id):
     data = request.get_json()
@@ -94,6 +98,7 @@ def update_note(note_id):
         }
     })
     
+# Delete a note
 @notes_bp.route('/<int:note_id>', methods=['DELETE'])
 def delete_note(note_id):
     note = Note.query.get(note_id)
