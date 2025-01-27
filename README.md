@@ -6,15 +6,13 @@ A RESTful API for managing notes, designed as a portfolio project. It supports b
 
 - **CRUD Operations**: Create, Read, Update, and Delete notes.
 - **SQLite Database**: Local storage for easy setup and portability.
-- **Interactive Documentation**: Swagger UI for API exploration.
-- **Extendable Design**: Ready for additional functionality like authentication and tags.
+- **Extendable Design**: Ready for future features like authentication, tags, and search.
 
 ## Technologies
 
 - **Programming Language**: Python 3.10+
-- **Framework**: Flask or FastAPI
+- **Framework**: Flask with Blueprints
 - **Database**: SQLite
-- **Documentation Tools**: Swagger
 
 ## Project Structure
 
@@ -57,11 +55,6 @@ NotesAPI/
    ```bash
    flask run
    ```
-
-## Usage
-
-- Access the API at `http://127.0.0.1:5000`.
-- Interactive API documentation is available at `/docs`.
 
 ## To Do
 
