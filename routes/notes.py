@@ -77,7 +77,7 @@ def get_note(note_id):
 @notes_bp.route('/<int:note_id>', methods=['PUT'])
 def update_note(note_id):
     data = request.get_json()
-    note = Note.query.get(note_id)
+    note = db.session.get(Note, note_id)
     if not note:
         return jsonify({'error': 'Note not found'}), 404
     
