@@ -7,7 +7,7 @@ notes_bp = Blueprint('notes', __name__)
 
 # Create a note
 @notes_bp.route('/create', methods=['POST'])
-def create():
+def create_note():
     data = request.get_json()
     if not data:
         return jsonify({'error': 'Invalid JSON payload'}), 400
