@@ -2,3 +2,5 @@
 /__pycache__
 /routes/__pycache__
 /instance
+/tests/__pycache__
+/tests/.pytest_cache
