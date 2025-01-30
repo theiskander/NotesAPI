@@ -1,5 +1,6 @@
 from extensions import db
 from datetime import datetime, timezone
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -10,3 +11,14 @@ class Note(db.Model):
     
     def __repr__(self):
         return f"<Note {self.id}: {self.title}>"
+    
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(32), unique=True, nullable = False)
+    hash_password = db.Column(db.String(128), nullable = False)
+    
+    def set_password(self, password):
+        self.hash_password = generate_password_hash(password)
+        
+    def check_password(self, password):
+        return check_password_hash(self.hash_password, password)
