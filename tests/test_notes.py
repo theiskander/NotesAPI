@@ -9,5 +9,9 @@ def test_create_note(client):
 
 def test_update_note(client):
     payload = {'title': 'Test Note Updated'}
-    response = client.put('/notes/1', json=payload)
+    response = client.put('/notes/2', json=payload)
+    assert response.status_code == 200
+    
+def test_delete_note(client):
+    response = client.delete('/notes/10')
     assert response.status_code == 200

@@ -101,7 +101,7 @@ def update_note(note_id):
 # Delete a note
 @notes_bp.route('/<int:note_id>', methods=['DELETE'])
 def delete_note(note_id):
-    note = Note.query.get(note_id)
+    note = db.session.get(Note, note_id)
     if not note:
         return jsonify({'error': 'Note not found'}), 401
     
