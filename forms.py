@@ -25,3 +25,7 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError('This name is already taken. Please choose another one')
         
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=64)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    submit = SubmitField('Login')
