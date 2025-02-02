@@ -26,6 +26,14 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('This name is already taken. Please choose another one')
         
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=64)])
+    id = StringField('Username or Email', validators=[DataRequired(), Length(min=4, max=64)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
+    
+    def validate_id(self, id):
+        user = User.query.filter(
+            (User.username == id.data) | (User.email == id.data)
+        ).first
+        
+        if not user:
+            raise ValidationError('No account found with this username or email')
