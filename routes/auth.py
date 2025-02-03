@@ -62,8 +62,13 @@ def login():
 # User logout
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id', None)
+    if 'user_id' in session:
+        session.pop('user_id', None)
+        return jsonify({
+            'success': True,
+            'message': 'You have logged out'
+        }), 200
     return jsonify({
-        'success': True,
-        'message': 'You have logged out'
+            'success': False,
+            'message': 'You have not logged out'
     }), 200
