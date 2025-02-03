@@ -1,5 +1,7 @@
-from flask import Blueprint, jsonify, request
-from forms import RegistrationForm
+from flask import Blueprint, jsonify, request, session
+from werkzeug.security import check_password_hash
+
+from forms import RegistrationForm, LoginForm
 from models import User
 from extensions import db
 
@@ -13,7 +15,10 @@ def register():
     if form.validate_on_submit():
         # Email checking
         if User.query.filter_by(email=form.email.data).first():
-            return jsonify({'success': False, 'message': 'Email already registered'}), 400
+            return jsonify({
+                'success': False,
+                'message': 'Email already registered'
+            }), 400
         
         user = User(username = form.username.data, email = form.email.data)
         user.set_password(form.password.data)
@@ -31,3 +36,25 @@ def register():
         'success': False,
         'errors': form.errors
         }), 400
+    
+# User login
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # User search by username/email
+        user = User.query.filter((User.username == form.who.data) | (User.email == form.who.data)).first()
+        
+        if user and check_password_hash(user.hash_password, form.password.data):
+            # Log in
+            session['user_id'] = user.id
+            return jsonify({
+                'success': True,
+                'data': {'user_id': user.id},
+                'message': 'You has been logged in!'
+        }), 200
+            
+    return jsonify({
+        'success': False,
+        'message': 'Incorrect login or password'
+    }), 400 
