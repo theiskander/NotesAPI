@@ -91,6 +91,8 @@ def update_note(note_id):
     # Updating fields
     note.title = data.get('title', note.title)
     note.content = data.get('content', note.content)
+    if not data.get('title') and not data.get('content'):
+        return jsonify({'error': 'No data provided for update'}), 400
     note.updated_at = datetime.now(timezone.utc)
     
     # Updating a note in the DB
@@ -105,3 +107,4 @@ def update_note(note_id):
                         'updated_at': note.updated_at
                     }
             })
+
