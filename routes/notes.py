@@ -59,3 +59,21 @@ def get_notes():
         })
         
     return jsonify(notes_list), 200
+
+@notes_bp.route('/<int:note_id>', methods=['GET'])
+def get_note(note_id):
+    # Search for a note
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({'error': 'Note not found'}), 404
+    
+    return jsonify({
+        'message': 'Note found successfully',
+        'note': {
+            'id': note.id,
+            'title': note.title,
+            'content': note.content,
+            'created_at': note.created_at,
+            'updated_at': note.updated_at
+        }
+    }), 200
