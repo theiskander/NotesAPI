@@ -40,3 +40,22 @@ def create():
             'content': new_note.content
         }
     }), 201
+
+# Get all notes
+@notes_bp.route('/', methods=['GET'])
+def get_notes():
+    # Search notes and retrieve data from them
+    notes = Note.query.all()
+    notes_list = []
+    
+    # Creating a list of all notes
+    for note in notes:
+        notes_list.append({
+            'id': note.id,
+            'title': note.title,
+            'content': note.content,
+            'created_at': note.created_at,
+            'updated_at': note.updated_at
+        })
+        
+    return jsonify(notes_list), 200
