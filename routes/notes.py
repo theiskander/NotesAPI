@@ -60,6 +60,7 @@ def get_notes():
         
     return jsonify(notes_list), 200
 
+# Get a note by id
 @notes_bp.route('/<int:note_id>', methods=['GET'])
 def get_note(note_id):
     # Search for a note
@@ -77,7 +78,8 @@ def get_note(note_id):
             'updated_at': note.updated_at
         }
     }), 200
-    
+
+# Update a note by id
 @notes_bp.route('/<int:note_id>', methods=['PUT'])
 def update_note(note_id):
     # Data request
@@ -108,3 +110,15 @@ def update_note(note_id):
                     }
             })
 
+# Delete a note by id
+@notes_bp.route('/<int:note_id>', methods=['DELETE'])
+def delete_note(note_id):
+    # Search for a note
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({'error': 'Note not found'}), 401
+    
+    # Deleting a note from the DB
+    db.session.delete(note)
+    db.session.commit()
+    return jsonify ({"message": 'Note deleted succesfully'})
