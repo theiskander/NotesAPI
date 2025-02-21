@@ -1,6 +1,6 @@
 from flask import Flask
 
-from extensions import db
+from extensions import db, ma
 from routes.notes import notes_bp
 
 def create_app():
@@ -11,8 +11,9 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    # Initialize extensions
+    # Initialize of extensions
     db.init_app(app)
+    ma.init_app(app)
     
     # Registration of blueprints
     app.register_blueprint(notes_bp, url_prefix='/notes')
