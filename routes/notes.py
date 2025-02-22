@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify
-from models import Note
 from datetime import datetime, timezone
+
+from models import Note
 from extensions import db
+from schemas import note_schema, notes_schema
 
 notes_bp = Blueprint('notes', __name__)
 
@@ -34,11 +36,7 @@ def create():
 
     return jsonify({
         'message': 'Note created successfully',
-        'note': {
-            'id': new_note.id,
-            'title': new_note.title,
-            'content': new_note.content
-        }
+        'note': note_schema.dump(new_note)
     }), 201
 
 # Get all notes
@@ -46,19 +44,13 @@ def create():
 def get_notes():
     # Search notes and retrieve data from them
     notes = Note.query.all()
-    notes_list = []
-    
-    # Creating a list of all notes
-    for note in notes:
-        notes_list.append({
-            'id': note.id,
-            'title': note.title,
-            'content': note.content,
-            'created_at': note.created_at,
-            'updated_at': note.updated_at
-        })
-        
-    return jsonify(notes_list), 200
+    if not notes:
+        return jsonify({'error': 'Notes not found'}), 404
+      
+    return jsonify({
+        'message': 'Notes list',
+        'note': notes_schema.dump(notes)
+    }), 200
 
 # Get a note by id
 @notes_bp.route('/<int:note_id>', methods=['GET'])
@@ -69,14 +61,8 @@ def get_note(note_id):
         return jsonify({'error': 'Note not found'}), 404
     
     return jsonify({
-        'message': 'Note found successfully',
-        'note': {
-            'id': note.id,
-            'title': note.title,
-            'content': note.content,
-            'created_at': note.created_at,
-            'updated_at': note.updated_at
-        }
+        'message': 'Note have found successfully',
+        'note': note_schema.dump(note)
     }), 200
 
 # Update a note by id
@@ -99,16 +85,11 @@ def update_note(note_id):
     
     # Updating a note in the DB
     db.session.commit()
-    
-    return jsonify({'message': 'Note updated successfully',
-                    'note': {
-                        'id': note.id,
-                        'title': note.title,
-                        'content': note.content,
-                        'created_at': note.created_at,
-                        'updated_at': note.updated_at
-                    }
-            })
+
+    return jsonify({
+        'message': 'Note updated successfully',
+        'note': note_schema.dump(note)
+    }), 200
 
 # Delete a note by id
 @notes_bp.route('/<int:note_id>', methods=['DELETE'])
@@ -118,7 +99,14 @@ def delete_note(note_id):
     if not note:
         return jsonify({'error': 'Note not found'}), 401
     
+    # Creating a response
+    deleted_note = note_schema.dump(note)
+    
     # Deleting a note from the DB
     db.session.delete(note)
     db.session.commit()
-    return jsonify ({"message": 'Note deleted succesfully'})
+    
+    return jsonify ({
+        "message": 'Note DELETED succesfully',
+        'deleted': deleted_note
+    }), 202
