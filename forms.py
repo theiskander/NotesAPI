@@ -5,6 +5,10 @@ from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, E
 from models import User
 
 class RegistrationForm(FlaskForm):
+    # Turn off CSRF
+    class Meta:
+        csrf = False
+        
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=64)])
     email =  EmailField('Email', validators=[DataRequired(), Email(), Length(min=10, max=64)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
