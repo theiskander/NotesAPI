@@ -6,8 +6,7 @@ from models import User
 
 class RegistrationForm(FlaskForm):
     # Turn off CSRF
-    class Meta:
-        csrf = False
+    class Meta: csrf = False
         
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=64)])
     email =  EmailField('Email', validators=[DataRequired(), Email(), Length(min=10, max=64)])
@@ -23,4 +22,12 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
-            raise ValidationError('This name is already taken. Please choose another one')
+            raise ValidationError('This email is already taken. Please choose another one')
+
+class LoginForm(FlaskForm):
+    # Turn off CSRF
+    class Meta: csrf = False
+        
+    who = StringField('Username or Email', validators=[DataRequired(), Length(min=4, max=64)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    submit = SubmitField('Login')
