@@ -59,3 +59,9 @@ def login():
         return jsonify({'error': 'Incorrect login or password'}), 400
     
     return jsonify({'error': form.errors}), 400
+
+# User logout
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({'message': 'You have logged out'}), 200
