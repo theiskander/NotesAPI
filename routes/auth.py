@@ -10,6 +10,10 @@ auth_bp = Blueprint('auth', __name__)
 # Register an user
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    # Authorization check
+    access = check_access(False)
+    if access: return access
+    
     # Initializing the form
     form = RegistrationForm(data=request.json)
     
@@ -40,6 +44,10 @@ def register():
 # User login
 @auth_bp.route('/login', methods=['POST'])
 def login():
+    # Authorization check
+    access = check_access(False)
+    if access: return access
+    
     # Initializing the form
     form = LoginForm(data=request.json)
     
@@ -63,5 +71,20 @@ def login():
 # User logout
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
+    # Authorization check
+    access = check_access(True)
+    if access: return access
+    
+    # Removing a user from a session (logging out)
     session.pop('user_id', None)
+    
     return jsonify({'message': 'You have logged out'}), 200
+
+# Check access to the pages
+def check_access(flag):
+    if 'user_id' in session and not flag:
+        return jsonify({'message': 'You have already logged in. Log out to access to this page'}), 200
+    elif not 'user_id' in session and flag:
+        return jsonify({'message': 'You have already logged out. Log in to access to this page'}), 200
+    else:
+        return None
