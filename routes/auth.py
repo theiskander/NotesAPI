@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request, session
-from werkzeug.security import check_password_hash
 
 from forms import RegistrationForm, LoginForm
 from models import User
+
 from extensions import db
+from utils.auth_helper import check_access
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -79,12 +80,3 @@ def logout():
     session.pop('user_id', None)
     
     return jsonify({'message': 'You have logged out'}), 200
-
-# Check access to the pages
-def check_access(flag):
-    if 'user_id' in session and not flag:
-        return jsonify({'message': 'You have already logged in. Log out to access to this page'}), 200
-    elif not 'user_id' in session and flag:
-        return jsonify({'message': 'You have already logged out. Log in to access to this page'}), 200
-    else:
-        return None
