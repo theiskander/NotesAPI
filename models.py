@@ -31,6 +31,10 @@ class User(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(32), unique = True, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+
+    # Uniqueness within an user
+    __table_args__ = (db.UniqueConstraint('name', 'user_id', name = 'uq_category_name_for_user'),)
     
     # Relationship 1:m
     notes = db.relationship('Note', backref = 'category', cascade="all, delete-orphan")
