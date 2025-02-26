@@ -14,7 +14,8 @@ notes_bp = Blueprint('notes', __name__)
 def create():
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Data request
     data = request.get_json()
@@ -52,7 +53,8 @@ def create():
 def get_notes():
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Search notes and retrieve data from them
     notes = Note.query.filter_by(user_id=session['user_id']).all()
@@ -69,7 +71,8 @@ def get_notes():
 def get_note(note_id):
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Search for a note
     note = Note.query.get(note_id)
@@ -78,7 +81,8 @@ def get_note(note_id):
     
     # Check note owner
     owner = check_user(note)
-    if owner: return owner
+    if owner:
+        return owner
     
     return jsonify({
         'message': 'Note have found successfully',
@@ -90,7 +94,8 @@ def get_note(note_id):
 def update_note(note_id):
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Data request
     data = request.get_json()
@@ -102,7 +107,8 @@ def update_note(note_id):
     
     # Check note owner
     owner = check_user(note)
-    if owner: return owner
+    if owner:
+        return owner
     
     # Updating fields
     note.title = data.get('title', note.title)
@@ -124,7 +130,8 @@ def update_note(note_id):
 def delete_note(note_id):
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Search for a note
     note = Note.query.get(note_id)
@@ -133,7 +140,8 @@ def delete_note(note_id):
     
     # Check note owner
     owner = check_user(note)
-    if owner: return owner
+    if owner:
+        return owner
     
     # Creating a response
     deleted_note = note_schema.dump(note)

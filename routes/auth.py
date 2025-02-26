@@ -13,7 +13,8 @@ auth_bp = Blueprint('auth', __name__)
 def register():
     # Authorization check
     access = check_access(False)
-    if access: return access
+    if access:
+        return access
     
     # Initializing the form
     form = RegistrationForm(data=request.json)
@@ -47,7 +48,8 @@ def register():
 def login():
     # Authorization check
     access = check_access(False)
-    if access: return access
+    if access:
+        return access
     
     # Initializing the form
     form = LoginForm(data=request.json)
@@ -74,7 +76,8 @@ def login():
 def logout():
     # Authorization check
     access = check_access(True)
-    if access: return access
+    if access:
+        return access
     
     # Removing a user from a session (logging out)
     session.pop('user_id', None)
