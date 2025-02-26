@@ -11,6 +11,7 @@ class Note(db.Model):
     
     # Foreign Keys
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable = False)
     
     def __repr__(self):
         return f"<Note {self.id}: {self.title}>"
@@ -26,3 +27,10 @@ class User(db.Model):
         
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(32), unique = True, nullable = False)
+    
+    # Relationship 1:m
+    notes = db.relationship('Note', backref = 'category', cascade="all, delete-orphan")

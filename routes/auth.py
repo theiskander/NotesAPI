@@ -38,7 +38,7 @@ def register():
         
         return jsonify({
             'message': 'User registered successfully!',
-            'data': {'user_id': user.id}
+            'user_id': user.id
         }), 201
     
     return jsonify({'error': form.errors}), 400
@@ -64,7 +64,7 @@ def login():
             
             return jsonify({
                 'message': 'You have been logged in!',
-                'data': {'user_id': user.id}
+                'user_id': user.id
             }), 200
             
         return jsonify({'error': 'Incorrect login or password'}), 400
