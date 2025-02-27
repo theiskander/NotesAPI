@@ -6,8 +6,9 @@ from utils.auth_helper import check_access
 
 categories_bp = Blueprint("categories", __name__)
 
+# Create a category
 @categories_bp.route('/create', methods = ['POST'])
-def categories():
+def create_category():
     # Authorization check
     access = check_access(True)
     if access:
@@ -45,3 +46,27 @@ def categories():
             'name': new_category.name
             }
     }), 201
+
+# All categories by user_id
+@categories_bp.route('/', methods = ['GET'])
+def get_categories():
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Search categories and retrieve data from them
+    categories = Category.query.filter_by(user_id = session['user_id']).all()
+    if not categories:
+        return jsonify({'error': 'Notes not found'}), 404
+    
+    # Creating a list of all categories
+    categories_list = []
+    for category in categories:
+        categories_list.append({
+            'id': category.id,
+            'name': category.name,
+            'user_id': category.user_id
+        })
+        
+    return jsonify(categories_list), 200
