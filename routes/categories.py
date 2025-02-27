@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session
 
 from models import Category
 from extensions import db
-from utils.auth_helper import check_access
+from utils.auth_helper import check_access, check_user
 
 categories_bp = Blueprint("categories", __name__)
 
@@ -70,3 +70,40 @@ def get_categories():
         })
         
     return jsonify(categories_list), 200
+
+@categories_bp.route('/<int:category_id>', methods = ['PUT'])
+def update_category(category_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Search for a category
+    category = Category.query.get(category_id)
+    if not category:
+        return jsonify({'error': 'Category not found'}), 404
+    
+    # Check note owner
+    owner = check_user(category)
+    if owner:
+        return owner
+    
+    # Data request
+    data = request.get_json()
+    
+    # Updating name
+    category.name = data.get('name', category.name)
+    if not data.get('name'):
+        return jsonify({'error': 'No data for update'}), 400
+    
+    # Updating a DB
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'The category updated successfully',
+        'category': {
+            'id': category.id,
+            'name': category.name
+            }
+    }), 200
+    

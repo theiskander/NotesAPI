@@ -10,8 +10,8 @@ def check_access(flag):
         return None
 
 # Check user id
-def check_user(note):
-    if note.user_id != session['user_id']:
-        return jsonify({'message': 'You can only work with your notes'}), 200
+def check_user(item):
+    if item.user_id != session['user_id']:
+        return jsonify({'message': 'You can only work with your items'}), 200
     
     return None
