@@ -106,4 +106,35 @@ def update_category(category_id):
             'name': category.name
             }
     }), 200
+
+@categories_bp.route('/<int:category_id>', methods = ['DELETE'])
+def delete_category(category_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
     
+    # Search for a category
+    category = Category.query.get(category_id)
+    if not category:
+        return jsonify({'error': 'Category not found'}), 404
+    
+    # Check note owner
+    owner = check_user(category)
+    if owner:
+        return owner
+
+    # Creating a response
+    deleted_category = category
+
+    # Delete a category from DB
+    db.session.delete(category)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'The category was DELETED',
+        'deleted': {
+            'id': deleted_category.id,
+            'name': deleted_category.name
+            }
+    }), 202 
