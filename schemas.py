@@ -1,5 +1,5 @@
 from extensions import ma
-from models import Note
+from models import Note, Category
 
 class NoteSchema(ma.SQLAlchemySchema):
     class Meta:
@@ -12,6 +12,18 @@ class NoteSchema(ma.SQLAlchemySchema):
     created_at = ma.auto_field()
     updated_at = ma.auto_field()
 
-# Instances of the schema
+class CategorySchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Category
+    
+    # Autofields for connection
+    id = ma.auto_field()
+    name = ma.auto_field()
+    
+# Instances of the Note schema
 note_schema = NoteSchema()
 notes_schema = NoteSchema(many=True)
+
+# Instances of the Category schema
+category_schema = CategorySchema()
+categories_schema = CategorySchema(many=True)

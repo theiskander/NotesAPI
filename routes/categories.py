@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request, session
 from models import Category
 from extensions import db
 from utils.auth_helper import check_access, check_user
+from schemas import category_schema, categories_schema
 
 categories_bp = Blueprint("categories", __name__)
 
@@ -41,10 +42,7 @@ def create_category():
     
     return jsonify({
         'message': 'The category created successfully',
-        'category': {
-            'id': new_category.id,
-            'name': new_category.name
-            }
+        'category': category_schema.dump(new_category)
     }), 201
 
 # All categories by user_id
@@ -60,16 +58,10 @@ def get_categories():
     if not categories:
         return jsonify({'error': 'Notes not found'}), 404
     
-    # Creating a list of all categories
-    categories_list = []
-    for category in categories:
-        categories_list.append({
-            'id': category.id,
-            'name': category.name,
-            'user_id': category.user_id
-        })
-        
-    return jsonify(categories_list), 200
+    return jsonify({
+        'message': "Categories list",
+        'categories': categories_schema.dump(categories)
+    }), 200
 
 @categories_bp.route('/<int:category_id>', methods = ['PUT'])
 def update_category(category_id):
@@ -101,10 +93,7 @@ def update_category(category_id):
     
     return jsonify({
         'message': 'The category updated successfully',
-        'category': {
-            'id': category.id,
-            'name': category.name
-            }
+        'category': category_schema.dump(category)
     }), 200
 
 @categories_bp.route('/<int:category_id>', methods = ['DELETE'])
@@ -133,8 +122,5 @@ def delete_category(category_id):
     
     return jsonify({
         'message': 'The category was DELETED',
-        'deleted': {
-            'id': deleted_category.id,
-            'name': deleted_category.name
-            }
+        'deleted': category_schema.dump(deleted_category)
     }), 202 
