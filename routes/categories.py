@@ -63,12 +63,21 @@ def get_categories():
         'categories': categories_schema.dump(categories)
     }), 200
 
+# Update a category
 @categories_bp.route('/<int:category_id>', methods = ['PUT'])
 def update_category(category_id):
     # Authorization check
     access = check_access(True)
     if access:
         return access
+    
+    # Data request
+    data = request.get_json()
+    
+    # Check existing of name
+    name = data.get('name')
+    if not name:
+        return jsonify({'error': 'No data for update'}), 400
     
     # Search for a category
     category = Category.query.get(category_id)
@@ -80,13 +89,13 @@ def update_category(category_id):
     if owner:
         return owner
     
-    # Data request
-    data = request.get_json()
+    # Check for the uniqueness of the category name
+    existing_category = Category.query.filter_by(name = name).first()
+    if existing_category and existing_category.id != category_id:
+        return jsonify({'error': 'Category with this name already created by you'}), 400
     
-    # Updating name
-    category.name = data.get('name', category.name)
-    if not data.get('name'):
-        return jsonify({'error': 'No data for update'}), 400
+    # Updating a name
+    category.name = name
     
     # Updating a DB
     db.session.commit()
