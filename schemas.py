@@ -11,6 +11,7 @@ class NoteSchema(ma.SQLAlchemySchema):
     content = ma.auto_field()
     created_at = ma.auto_field()
     updated_at = ma.auto_field()
+    category_id = ma.auto_field()
 
 class CategorySchema(ma.SQLAlchemySchema):
     class Meta:
