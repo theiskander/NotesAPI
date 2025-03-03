@@ -38,3 +38,11 @@ class Category(db.Model):
     
     # Relationship 1:m
     notes = db.relationship('Note', backref = 'category', cascade="all, delete-orphan")
+    
+    
+def ensure_uncategorized_exists():
+    category = Category.query.filter_by(name = "Uncategorized").first()
+    if not category:
+        uncategorized = Category(id = 0, name = "Uncategorized", user_id = 0)
+        db.session.add(uncategorized)
+        db.session.commit()

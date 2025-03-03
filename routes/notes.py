@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timezone
 
-from models import Note
+from models import Note, Category
 from schemas import note_schema, notes_schema
 
 from extensions import db
@@ -29,6 +29,9 @@ def create():
     content = data.get('content')
     time = datetime.now(timezone.utc)
     user_id = session['user_id']
+    category_id = data.get('category_id')
+    if not category_id:
+        category_id = 0
     
     # Creating a note
     new_note = Note(
@@ -36,7 +39,8 @@ def create():
         content=content,
         created_at=time,
         updated_at=time,
-        user_id = user_id
+        user_id = user_id,
+        category_id = category_id
     )
     
     # Added a note to the DB

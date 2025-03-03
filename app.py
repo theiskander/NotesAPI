@@ -4,6 +4,7 @@ from extensions import db, ma
 from routes.notes import notes_bp
 from routes.auth import auth_bp
 from routes.categories import categories_bp
+from models import ensure_uncategorized_exists
 
 def create_app():
     app = Flask(__name__)
@@ -21,7 +22,7 @@ def create_app():
     app.register_blueprint(notes_bp, url_prefix='/notes')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(categories_bp, url_prefix='/categories')
-     
+   
     @app.route('/')
     def index():
         return "It works!"
