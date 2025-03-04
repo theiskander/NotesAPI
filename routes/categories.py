@@ -56,7 +56,9 @@ def get_categories():
     # Search categories and retrieve data from them
     categories = Category.query.filter_by(user_id = session['user_id']).all()
     if not categories:
-        return jsonify({'error': 'Notes not found'}), 404
+        return jsonify({
+        'message': 'You have only Uncategorized category (by default)',
+        }), 200
     
     return jsonify({
         'message': 'Categories list',
@@ -105,6 +107,7 @@ def update_category(category_id):
         'category': category_schema.dump(category)
     }), 200
 
+# Delete a category
 @categories_bp.route('/<int:category_id>', methods = ['DELETE'])
 def delete_category(category_id):
     # Authorization check
