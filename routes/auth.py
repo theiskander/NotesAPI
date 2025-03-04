@@ -9,7 +9,7 @@ from utils.auth_helper import check_access
 auth_bp = Blueprint('auth', __name__)
 
 # Register an user
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods = ['POST'])
 def register():
     # Authorization check
     access = check_access(False)
@@ -17,15 +17,15 @@ def register():
         return access
     
     # Initializing the form
-    form = RegistrationForm(data=request.json)
+    form = RegistrationForm(data = request.json)
     
     if form.validate_on_submit():
         # Username checking
-        if User.query.filter_by(username=form.username.data).first():
+        if User.query.filter_by(username = form.username.data).first():
             return jsonify({'error': 'Username already registered'}), 400
         
         # Email checking
-        if User.query.filter_by(email=form.email.data).first():
+        if User.query.filter_by(email = form.email.data).first():
             return jsonify({'error': 'Email already registered'}), 400
         
         # Initialize a new user with a hashed password
@@ -44,7 +44,7 @@ def register():
     return jsonify({'error': form.errors}), 400
 
 # User login
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods = ['POST'])
 def login():
     # Authorization check
     access = check_access(False)
@@ -52,7 +52,7 @@ def login():
         return access
     
     # Initializing the form
-    form = LoginForm(data=request.json)
+    form = LoginForm(data = request.json)
     
     if form.validate_on_submit():
         # User search by username/email
@@ -72,7 +72,7 @@ def login():
     return jsonify({'error': form.errors}), 400
 
 # User logout
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route('/logout', methods = ['POST'])
 def logout():
     # Authorization check
     access = check_access(True)

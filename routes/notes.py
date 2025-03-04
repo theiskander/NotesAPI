@@ -10,7 +10,7 @@ from utils.auth_helper import check_access, check_user
 notes_bp = Blueprint('notes', __name__)
 
 # Create a note
-@notes_bp.route('/create', methods=['POST'])
+@notes_bp.route('/create', methods = ['POST'])
 def create():
     # Authorization check
     access = check_access(True)
@@ -35,10 +35,10 @@ def create():
     
     # Creating a note
     new_note = Note(
-        title=title,
-        content=content,
-        created_at=time,
-        updated_at=time,
+        title = title,
+        content = content,
+        created_at = time,
+        updated_at = time,
         user_id = user_id,
         category_id = category_id
     )
@@ -53,7 +53,7 @@ def create():
     }), 201
 
 # Get all notes
-@notes_bp.route('/', methods=['GET'])
+@notes_bp.route('/', methods = ['GET'])
 def get_notes():
     # Authorization check
     access = check_access(True)
@@ -71,7 +71,7 @@ def get_notes():
     }), 200
 
 # Get a note by id
-@notes_bp.route('/<int:note_id>', methods=['GET'])
+@notes_bp.route('/<int:note_id>', methods = ['GET'])
 def get_note(note_id):
     # Authorization check
     access = check_access(True)
@@ -94,7 +94,7 @@ def get_note(note_id):
     }), 200
 
 # Update a note by id
-@notes_bp.route('/<int:note_id>', methods=['PUT'])
+@notes_bp.route('/<int:note_id>', methods = ['PUT'])
 def update_note(note_id):
     # Authorization check
     access = check_access(True)
@@ -130,7 +130,7 @@ def update_note(note_id):
     }), 200
 
 # Delete a note by id
-@notes_bp.route('/<int:note_id>', methods=['DELETE'])
+@notes_bp.route('/<int:note_id>', methods = ['DELETE'])
 def delete_note(note_id):
     # Authorization check
     access = check_access(True)
@@ -155,6 +155,6 @@ def delete_note(note_id):
     db.session.commit()
     
     return jsonify ({
-        "message": 'Note DELETED succesfully',
+        'message': 'Note DELETED succesfully',
         'deleted': deleted_note
     }), 202

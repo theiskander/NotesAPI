@@ -5,7 +5,7 @@ from extensions import db
 from utils.auth_helper import check_access, check_user
 from schemas import category_schema, categories_schema
 
-categories_bp = Blueprint("categories", __name__)
+categories_bp = Blueprint('categories', __name__)
 
 # Create a category
 @categories_bp.route('/create', methods = ['POST'])
@@ -27,7 +27,7 @@ def create_category():
         return jsonify({'error': 'Name is required'}), 400
     
     # Check avalability of a name
-    if Category.query.filter_by(name=name).first():
+    if Category.query.filter_by(name = name).first():
         return jsonify({'error': 'Name already registered'}), 400
     
     # Creating a new category
@@ -59,7 +59,7 @@ def get_categories():
         return jsonify({'error': 'Notes not found'}), 404
     
     return jsonify({
-        'message': "Categories list",
+        'message': 'Categories list',
         'categories': categories_schema.dump(categories)
     }), 200
 

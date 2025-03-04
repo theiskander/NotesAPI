@@ -23,8 +23,8 @@ class CategorySchema(ma.SQLAlchemySchema):
     
 # Instances of the Note schema
 note_schema = NoteSchema()
-notes_schema = NoteSchema(many=True)
+notes_schema = NoteSchema(many = True)
 
 # Instances of the Category schema
 category_schema = CategorySchema()
-categories_schema = CategorySchema(many=True)
+categories_schema = CategorySchema(many = True)

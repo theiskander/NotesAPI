@@ -19,16 +19,21 @@ def create_app():
     ma.init_app(app)
     
     # Registration of blueprints
-    app.register_blueprint(notes_bp, url_prefix='/notes')
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(categories_bp, url_prefix='/categories')
+    app.register_blueprint(notes_bp, url_prefix = '/notes')
+    app.register_blueprint(auth_bp, url_prefix = '/auth')
+    app.register_blueprint(categories_bp, url_prefix = '/categories')
+   
+    # The DB initialization and creating the necessary records
+    with app.app_context():
+        db.create_all()
+        ensure_uncategorized_exists()
    
     @app.route('/')
     def index():
-        return "It works!"
+        return 'It works!'
 
     return app
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)

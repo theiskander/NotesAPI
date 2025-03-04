@@ -14,7 +14,7 @@ class Note(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable = False)
     
     def __repr__(self):
-        return f"<Note {self.id}: {self.title}>"
+        return f'<Note {self.id}: {self.title}>'
     
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -37,12 +37,15 @@ class Category(db.Model):
     __table_args__ = (db.UniqueConstraint('name', 'user_id', name = 'uq_category_name_for_user'),)
     
     # Relationship 1:m
-    notes = db.relationship('Note', backref = 'category', cascade="all, delete-orphan")
+    notes = db.relationship('Note', backref = 'category', cascade = 'all, delete-orphan')
     
-    
+# Retrieve or creating Uncategorized category  
 def ensure_uncategorized_exists():
-    category = Category.query.filter_by(name = "Uncategorized").first()
+    #Search for the category
+    category = Category.query.filter_by(name = 'Uncategorized').first()
+    
+    # Create the category
     if not category:
-        uncategorized = Category(id = 0, name = "Uncategorized", user_id = 0)
+        uncategorized = Category(id = 0, name = 'Uncategorized', user_id = 0)
         db.session.add(uncategorized)
         db.session.commit()
