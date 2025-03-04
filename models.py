@@ -30,7 +30,7 @@ class User(db.Model):
     
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(32), unique = True, nullable = False)
+    name = db.Column(db.String(32), nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
 
     # Uniqueness within an user

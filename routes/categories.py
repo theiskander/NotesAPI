@@ -27,8 +27,8 @@ def create_category():
         return jsonify({'error': 'Name is required'}), 400
     
     # Check avalability of a name
-    if Category.query.filter_by(name = name).first():
-        return jsonify({'error': 'Name already registered'}), 400
+    if Category.query.filter_by(name = name, user_id = user_id).first():
+        return jsonify({'error': 'Category with this name already created by you'}), 400
     
     # Creating a new category
     new_category = Category(
