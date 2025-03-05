@@ -20,7 +20,7 @@ def create_category():
     if not data:
         return jsonify({'error': 'Invalid JSON payload'}), 400
     
-     # Fill in in the fields of a new category
+    # Fill in in the fields of a new category
     user_id = session['user_id']
     name = data.get('name')
     if not name:
@@ -36,7 +36,7 @@ def create_category():
         user_id = user_id
     )
     
-    # Add new note to the DB
+    # Add new category to the DB
     db.session.add(new_category)
     db.session.commit()
     
@@ -86,7 +86,7 @@ def update_category(category_id):
     if not category:
         return jsonify({'error': 'Category not found'}), 404
     
-    # Check note owner
+    # Check category owner
     owner = check_user(category)
     if owner:
         return owner
@@ -120,7 +120,7 @@ def delete_category(category_id):
     if not category:
         return jsonify({'error': 'Category not found'}), 404
     
-    # Check note owner
+    # Check category owner
     owner = check_user(category)
     if owner:
         return owner
