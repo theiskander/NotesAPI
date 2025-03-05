@@ -12,9 +12,9 @@ class Note(db.Model):
     # Foreign Keys
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable = False)
-    
-    def __repr__(self):
-        return f'<Note {self.id}: {self.title}>'
+
+    # Relationship m:m
+    tags = db.relationship('Tag', secondary = 'note_tag', back_populates = 'notes')
     
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -41,7 +41,7 @@ class Category(db.Model):
     
 # Retrieve or creating Uncategorized category  
 def ensure_uncategorized_exists():
-    #Search for the category
+    # Search for the category
     category = Category.query.filter_by(name = 'Uncategorized').first()
     
     # Create the category
@@ -49,3 +49,21 @@ def ensure_uncategorized_exists():
         uncategorized = Category(id = 0, name = 'Uncategorized', user_id = 0)
         db.session.add(uncategorized)
         db.session.commit()
+
+class Tag (db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(32), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    
+    # Uniqueness of name within an user
+    __table_args__= (db.UniqueConstraint('name', 'user_id', name = 'uq_tag_name_for_user'),)
+    
+    # Relationship m:m
+    notes = db.relationship('Note', secondary = 'note_tag', back_populates = 'tags')
+
+    # Additional table for m:m relationship
+    note_tag = db.Table(
+        'note_tag',
+        db.Column('note_id', db.Integer, db.ForeignKey('note.id'), primary_key = True),
+        db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key = True),
+    )
