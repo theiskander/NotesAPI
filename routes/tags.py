@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-
+from sqlalchemy import delete
 from utils.auth_helper import check_access, check_user
 from models import Tag
 from extensions import db
@@ -119,3 +119,42 @@ def update_tag(tag_id):
             'id': tag.id
         }
     }), 200
+    
+# Delete a tag
+@tags_bp.route('/<int:tag_id>', methods = ['DELETE'])
+def delete_tag(tag_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Search for a tag
+    tag = Tag.query.get(tag_id)
+    if not tag:
+        return jsonify({'error': 'Tag not found'}), 404
+    
+    # Check tag owner
+    owner = check_user(tag)
+    if owner:
+        return owner
+    
+     # Creating a response
+    deleted_tag = tag
+
+    # Deleting all connections in note_tag
+    db.session.execute(delete(Tag.note_tag).where(Tag.note_tag.c.tag_id == tag_id))
+    db.session.commit()
+    
+    # Deleting a category from DB
+    db.session.delete(tag)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'The tag was DELETED successfully',
+        'deleted tag': {
+            'name': deleted_tag.name,
+            'user_id': deleted_tag.user_id
+        }
+    }), 202
+
+    
