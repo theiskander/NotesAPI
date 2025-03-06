@@ -60,7 +60,7 @@ def get_tags():
     if not tags:
         return jsonify({'error': 'Tags not found',}), 404
     
-    # 
+    # Creating a list of all tags
     tags_list = []
     for tag in tags:
         tags_list.append({
@@ -72,4 +72,50 @@ def get_tags():
         'message': 'Tags list',
         'tags': tags_list
     }), 200
+
+# Update a tag
+@tags_bp.route('/<int:tag_id>', methods = ['PUT'])
+def update_tag(tag_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
     
+    # Data request
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON payload'}), 400
+    
+    # Check existing of name
+    name = data.get('name')
+    if not name:
+        return jsonify({'error': 'No data for update'}), 400
+    
+    # Search for a tag
+    tag = Tag.query.get(tag_id)
+    if not tag:
+        jsonify({'error':'The tag not found'}), 404
+        
+    # Check tag owner
+    owner = check_user(tag)
+    if owner:
+        return owner
+    
+    # Check for the uniqueness of the tag name
+    existing_tag = Tag.query.filter_by(name = name).first()
+    if existing_tag and existing_tag.id != tag_id:
+        return jsonify({'error': 'The tag with this name already created by you'}), 400
+    
+    # Updating a name
+    tag.name = name
+    
+    # Updating a DB
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'The tag updated successfully',
+        'tag': {
+            'name': tag.name,
+            'id': tag.id
+        }
+    }), 200
