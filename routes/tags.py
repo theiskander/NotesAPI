@@ -7,7 +7,7 @@ from extensions import db
 tags_bp = Blueprint('tags', __name__)
 
 # Create a tag
-@tags_bp.route('/create', methods = ['GET'])
+@tags_bp.route('/create', methods = ['POST'])
 def create_tag():
     # Authorization check
     access = check_access(True)
@@ -46,3 +46,30 @@ def create_tag():
             'user_id': new_tag.user_id
         }
     }), 201
+    
+# Retrieve all tags by user id
+@tags_bp.route('/', methods = ['GET'])
+def get_tags():
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Search for tags
+    tags = Tag.query.filter_by(user_id = session['user_id']).all()
+    if not tags:
+        return jsonify({'error': 'Tags not found',}), 404
+    
+    # 
+    tags_list = []
+    for tag in tags:
+        tags_list.append({
+            'name': tag.name,
+            'id': tag.id
+        })
+        
+    return jsonify({
+        'message': 'Tags list',
+        'tags': tags_list
+    }), 200
+    
