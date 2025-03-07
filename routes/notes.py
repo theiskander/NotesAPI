@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timezone
 
-from models import Note, Category
+from models import Note, Tag
 from schemas import note_schema, notes_schema
 
 from extensions import db
@@ -158,3 +158,49 @@ def delete_note(note_id):
         'message': 'Note DELETED succesfully',
         'deleted': deleted_note
     }), 202
+    
+# Add a tag to a note
+@notes_bp.route('/<int:note_id>/tags', methods = ['POST'])
+def add_tag(note_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Retrieve a data
+    data = request.get_json()
+    tag_id = data.get('tag_id')
+    if not tag_id:
+        return jsonify({'error': 'Invalid JSON payload'}), 400
+    
+    # Search for a note
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({'error': 'The note was not found'}), 404
+    
+    # Check a note owner
+    owner = check_user(note)
+    if owner:
+        return owner
+    
+    # Search for a tag
+    tag = Tag.query.get(tag_id)
+    if not tag:
+        return jsonify({'error': 'Tag_id is required'})
+    
+    # Creating a record
+    new_record = Tag.note_tag.insert().values(
+        note_id = note_id,
+        tag_id = tag_id
+    )
+    
+    # Add new record to the DB
+    db.session.execute(new_record)
+    db.session.commit()
+    
+    return jsonify({
+        'notetag': {
+            'note_id': note_id,
+            'tag_id': tag_id
+        }
+    }), 201
