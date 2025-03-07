@@ -3,6 +3,7 @@ from sqlalchemy import delete
 from utils.auth_helper import check_access, check_user
 from models import Tag
 from extensions import db
+from schemas import tag_schema, tags_schema
 
 tags_bp = Blueprint('tags', __name__)
 
@@ -41,10 +42,7 @@ def create_tag():
     
     return jsonify({
         'message': 'The tag created successfully',
-        'tag': {
-            'name': new_tag.name,
-            'user_id': new_tag.user_id
-        }
+        'tag': tag_schema.dump(new_tag)
     }), 201
     
 # Retrieve all tags by user id
@@ -59,18 +57,10 @@ def get_tags():
     tags = Tag.query.filter_by(user_id = session['user_id']).all()
     if not tags:
         return jsonify({'error': 'Tags not found',}), 404
-    
-    # Creating a list of all tags
-    tags_list = []
-    for tag in tags:
-        tags_list.append({
-            'name': tag.name,
-            'id': tag.id
-        })
         
     return jsonify({
         'message': 'Tags list',
-        'tags': tags_list
+        'tags': tags_schema.dump(tags)
     }), 200
 
 # Update a tag
@@ -114,10 +104,7 @@ def update_tag(tag_id):
     
     return jsonify({
         'message': 'The tag updated successfully',
-        'tag': {
-            'name': tag.name,
-            'id': tag.id
-        }
+        'tag': tag_schema.dump(tag)
     }), 200
     
 # Delete a tag
@@ -151,10 +138,5 @@ def delete_tag(tag_id):
     
     return jsonify({
         'message': 'The tag was DELETED successfully',
-        'deleted tag': {
-            'name': deleted_tag.name,
-            'user_id': deleted_tag.user_id
-        }
+        'deleted tag': tag_schema.dump(deleted_tag)
     }), 202
-
-    
