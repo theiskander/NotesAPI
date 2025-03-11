@@ -188,6 +188,11 @@ def add_tag(note_id):
     if not tag:
         return jsonify({'error': 'Tag_id is required'})
     
+    # Check a tag owner
+    owner = check_user(tag)
+    if owner:
+        return owner
+    
     # Creating a record
     new_record = Tag.note_tag.insert().values(
         note_id = note_id,
