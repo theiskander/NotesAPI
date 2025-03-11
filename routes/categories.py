@@ -75,6 +75,8 @@ def update_category(category_id):
     
     # Data request
     data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON payload'}), 400
     
     # Check existing of name
     name = data.get('name')
