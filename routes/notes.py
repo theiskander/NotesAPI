@@ -103,6 +103,8 @@ def update_note(note_id):
     
     # Data request
     data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON payload'}), 400
     
     # Search for a note
     note = Note.query.get(note_id)
