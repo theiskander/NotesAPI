@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, session
 from datetime import datetime, timezone
+from sqlalchemy import delete
 
 from models import Note, Tag
-from schemas import note_schema, notes_schema
+from schemas import note_schema, notes_schema, tag_schema
 
 from extensions import db
 from utils.auth_helper import check_access, check_user
@@ -188,7 +189,7 @@ def add_tag(note_id):
     # Search for a tag
     tag = Tag.query.get(tag_id)
     if not tag:
-        return jsonify({'error': 'Tag_id is required'})
+        return jsonify({'error': 'The tag was not found'})
     
     # Check a tag owner
     owner = check_user(tag)
@@ -211,3 +212,42 @@ def add_tag(note_id):
             'tag_id': tag_id
         }
     }), 201
+    
+# Delete a tag from a note
+@notes_bp.route('/<int:note_id>/tags/<int:tag_id>', methods = ['DELETE'])
+def remove_tag(note_id, tag_id):
+    # Authorization check
+    access = check_access(True)
+    if access:
+        return access
+    
+    # Search for a note
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({'error': 'The note was not found'}), 404
+    
+    # Search for a tag
+    tag = Tag.query.get(tag_id)
+    if not tag:
+        return jsonify({'error': 'The tag was not found'}), 404
+
+    # Check a tag owner
+    owner = check_user(tag)
+    if owner:
+        return owner
+    
+    # Deleted tag from a note (JSON response before deletion)
+    deleted_tag = tag_schema.dump(tag)
+
+    # Deleting record from note_tag
+    temp = delete(Tag.note_tag).where(
+        (Tag.note_tag.c.note_id == note_id) & 
+        (Tag.note_tag.c.tag_id == tag_id)
+    )
+    db.session.execute(temp)
+    db.session.commit()
+    
+    return jsonify({
+        'message': "The tag was DELETED successfully",
+        'deleted_tag': deleted_tag
+    }), 202
