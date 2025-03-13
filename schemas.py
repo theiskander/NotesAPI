@@ -12,6 +12,7 @@ class NoteSchema(ma.SQLAlchemySchema):
     created_at = ma.auto_field()
     updated_at = ma.auto_field()
     category_id = ma.auto_field()
+    tags = ma.auto_field()
     
 # Instances of the Note schema
 note_schema = NoteSchema()
